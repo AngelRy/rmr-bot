@@ -1,0 +1,19 @@
+# environment variables
+.env
+
+# virtual environments
+venv/
+rmvnv/
+.env/
+
+# python cache
+__pycache__/
+*.pyc
+
+# runtime artifacts
+output/images/*
+logs/*
+*.log
+
+# editor
+.vscode/

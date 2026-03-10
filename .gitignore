@@ -4,16 +4,16 @@
 # virtual environments
 venv/
 rmvnv/
-.env/
 
-# python cache
+# python
 __pycache__/
 *.pyc
 
 # runtime artifacts
-output/images/*
-logs/*
-*.log
+*.db
+*.joblib
+output/
+logs/
 
 # editor
 .vscode/

@@ -1,15 +1,13 @@
 # rmrbot/generator/image_generator.py
 
 from PIL import Image, ImageDraw, ImageFont
-import textwrap
 import os
 import random
 from datetime import datetime
+from rmrbot.config.settings import OUTPUT_DIR, LOGO_PATH, FONT_PATH
 
-OUTPUT_DIR = "output/images"
 IMAGE_SIZE = (1080, 1080)
 
-LOGO_PATH = "assets/rmrtrex.png"
 LOGO_SCALE = 0.15 
 LOGO_PADDING = 30
 
@@ -40,7 +38,6 @@ GRADIENT_PALETTES = [
 ]
 
 
-FONT_PATH = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 
 
 def _wrap_text(text, font, max_width, draw):
@@ -63,7 +60,7 @@ def _wrap_text(text, font, max_width, draw):
     return lines
 
 
-def generate_image(quote: str, author: str | None = None) -> str:
+def generate_quote_image(quote: str, author: str | None = None) -> str:
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
@@ -112,8 +109,6 @@ def generate_image(quote: str, author: str | None = None) -> str:
         y += bbox[3] + LINE_SPACING
 
 
-# ⬇⬇⬇ ADD THIS BLOCK RIGHT HERE ⬇⬇⬇
-
     if author:
         author_font_size = int(font_size * AUTHOR_FONT_SCALE)
         author_font = ImageFont.truetype(FONT_PATH, author_font_size)
@@ -128,7 +123,10 @@ def generate_image(quote: str, author: str | None = None) -> str:
 
     # Add logo to bottom-right corner
     if os.path.exists(LOGO_PATH):
-        logo = Image.open(LOGO_PATH).convert("RGBA")
+        try:
+            logo = Image.open(LOGO_PATH).convert("RGBA")
+        except Exception:
+            logo = None
 
         target_w = int(IMAGE_SIZE[0] * LOGO_SCALE)
         ratio = target_w / logo.width
@@ -145,7 +143,7 @@ def generate_image(quote: str, author: str | None = None) -> str:
 # ⬆⬆⬆ AUTHOR BLOCK ENDS HERE ⬆⬆⬆
 
 
-    filename = f"quote_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+    filename = f"quote_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}.png"
     path = os.path.join(OUTPUT_DIR, filename)
     img.save(path)
 

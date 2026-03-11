@@ -4,6 +4,10 @@ from datetime import datetime
 
 
 def get_quote_for_posting():
+    """
+    Returns one quote eligible for posting.
+    """
+
     conn = get_connection()
     cur = conn.cursor()
 
@@ -21,11 +25,18 @@ def get_quote_for_posting():
         """)
 
         row = cur.fetchone()
-        return row  # (id, text) or None
+
+        if not row:
+            return None
+
+        return {
+            "id": row[0],
+            "text": row[1]
+        }
 
     finally:
+        cur.close()
         conn.close()
-
 
 def insert_quote(text, score, is_relevant, conn=None):
     own_conn = False
@@ -58,37 +69,6 @@ def insert_quote(text, score, is_relevant, conn=None):
         if own_conn:
             conn.close()
 
-def get_random_eligible_quote():
-    """
-    Returns a random quote that has not been posted
-    in the last 90 days.
-    """
-
-    conn = get_connection()
-    cur = conn.cursor()
-
-    try:
-        cur.execute("""
-            SELECT text
-            FROM quotes
-            WHERE last_posted IS NULL
-               OR last_posted < NOW() - INTERVAL '90 days'
-        """)
-
-        rows = cur.fetchall()
-
-        if not rows:
-            print("[WARN] No eligible quotes found.")
-            return None
-
-        quote = random.choice(rows)[0]
-        return quote
-
-    finally:
-        cur.close()
-        conn.close()
-
-
 
 def get_all_quotes():
     conn = get_connection()
@@ -103,6 +83,7 @@ def get_all_quotes():
 
 
 def mark_as_posted(quote_id):
+
     conn = get_connection()
     cur = conn.cursor()
 
@@ -112,9 +93,13 @@ def mark_as_posted(quote_id):
             SET last_posted = NOW()
             WHERE id = %s
         """, (quote_id,))
+
         conn.commit()
+
     finally:
+        cur.close()
         conn.close()
+
 
 def update_similarity(quote_id, score, is_relevant):
     conn = get_connection()

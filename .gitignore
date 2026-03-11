@@ -14,6 +14,22 @@ __pycache__/
 *.joblib
 output/
 logs/
+archive/
+data/
 
 # editor
-.vscode/
+.vscode/models/*.joblib
+
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+
+
+# OS files
+.DS_Store
+*.swp
+

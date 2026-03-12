@@ -33,3 +33,7 @@ __pycache__/
 .DS_Store
 *.swp
 
+rmrbot/scheduler/last_run.txt
+*.log
+.env
+__pycache__/

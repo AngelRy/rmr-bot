@@ -8,6 +8,12 @@ from datetime import datetime
 # --- Load .env before anything else ---
 load_dotenv()
 
+### for testing only, remove in production
+print("OPENAI KEY:", os.getenv("OPENAI_API_KEY"))
+### end testing code
+
+
+
 from rmrbot.pipeline import run_pipeline
 
 # --- Logging setup ---

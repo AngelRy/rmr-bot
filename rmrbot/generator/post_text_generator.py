@@ -5,16 +5,29 @@ from openai import OpenAI
 
 
 # Enable LLM only if API key exists
-USE_LLM = bool(os.getenv("OPENAI_API_KEY"))
+USE_LLM = bool(os.getenv("GROQ_API_KEY"))
 
-
+'''
 SYSTEM_PROMPT = (
     "You write concise, thoughtful social media captions for distance runners. "
     "The tone is reflective, grounded, and authentic. "
     "Avoid clichés, emojis, and hashtags. "
     "Write 2–3 sentences only."
 )
+'''
 
+SYSTEM_PROMPT = (
+    "You write thoughtful Facebook captions for a community of distance runners. "
+    "The caption reflects on the deeper meaning of the quote and connects it to the mindset "
+    "of running, discipline, patience, and long-term progress. "
+    "Frame the reflection so that experienced runners recognize themselves in it. "
+    "Focus on habits, struggles, or quiet moments runners experience during training. "
+    "Tone is reflective, authentic, and grounded — never motivational hype. "
+    "Avoid clichés, emojis, and hashtags. "
+    "Write 2–3 sentences only. "
+    "The caption should add perspective to the quote rather than repeat it. "
+    "Occasionally end with a subtle question that invites runners to share their experience."
+)
 
 def append_hashtags(text: str, k: int = 6) -> str:
     tags = random.sample(RUNNING_HASHTAGS, k=min(k, len(RUNNING_HASHTAGS)))
@@ -48,16 +61,19 @@ def generate_caption(quote: str, author: str | None = None) -> str:
     )
 
     try:
-        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        client = OpenAI(
+            api_key=os.getenv("GROQ_API_KEY"),
+            base_url="https://api.groq.com/openai/v1"
+        )
 
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="llama-3.3-70b-versatile",
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt},
             ],
             temperature=0.7,
-            max_tokens=120,
+            max_tokens=160,
         )
 
         caption = response.choices[0].message.content.strip()

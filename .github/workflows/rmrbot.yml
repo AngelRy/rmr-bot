@@ -20,13 +20,13 @@ jobs:
       db:
         image: postgres:15
         env:
-          POSTGRES_DB: DB_NAME
-          POSTGRES_USER: DB_USER
-          POSTGRES_PASSWORD: DB_PASS
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U $DB_USER"
+          --health-cmd="pg_isready -U postgres"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5

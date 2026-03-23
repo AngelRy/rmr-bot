@@ -35,5 +35,5 @@ __pycache__/
 
 rmrbot/scheduler/last_run.txt
 *.log
-.env
+.env*
 __pycache__/

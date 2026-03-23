@@ -11,17 +11,22 @@ jobs:
   run-bot:
     runs-on: ubuntu-latest
 
+    env:
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASS: ${{ secrets.DB_PASS }}
+
     services:
       db:
         image: postgres:15
         env:
-          POSTGRES_DB: ${{ secrets.DB_NAME }}
-          POSTGRES_USER: ${{ secrets.DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASS }}
+          POSTGRES_DB: DB_NAME
+          POSTGRES_USER: DB_USER
+          POSTGRES_PASSWORD: DB_PASS
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U ${{ secrets.DB_USER }}"
+          --health-cmd="pg_isready -U $DB_USER"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
@@ -30,13 +35,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Install Postgres client (for pg_isready)
+      - name: Install Postgres client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
 
       - name: Wait for DB
         run: |
           for i in {1..10}; do
-            pg_isready -h localhost -p 5432 -U ${{ secrets.DB_USER }} && break
+            pg_isready -h localhost -p 5432 -U $DB_USER && break
             echo "Waiting for DB..."
             sleep 3
           done
@@ -50,8 +55,8 @@ jobs:
             -e GROQ_API_KEY=${{ secrets.GROQ_API_KEY }} \
             -e FB_PAGE_ID=${{ secrets.FB_PAGE_ID }} \
             -e FB_PAGE_TOKEN=${{ secrets.FB_PAGE_TOKEN }} \
-            -e DB_NAME=${{ secrets.DB_NAME }} \
-            -e DB_USER=${{ secrets.DB_USER }} \
-            -e DB_PASS=${{ secrets.DB_PASS }} \
+            -e DB_NAME=$DB_NAME \
+            -e DB_USER=$DB_USER \
+            -e DB_PASS=$DB_PASS \
             -e DB_HOST=host.docker.internal \
             rmrbot

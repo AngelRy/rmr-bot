@@ -1,13 +1,24 @@
-import requests, os
+import os
 
-page_id = os.getenv("FB_PAGE_ID")        # numeric page ID
-page_token = os.getenv("FB_PAGE_TOKEN")  # Page Access Token
-image_path = "output/quote_20260311_102124_351834.png"   # your generated image
-caption = "Test post from RMR Bot"
+dotenv_path = "/home/angels/rmr-bot/.env"
 
-with open(image_path, "rb") as f:
-    files = {"source": f}
-    data = {"caption": caption, "access_token": page_token}
-    r = requests.post(f"https://graph.facebook.com/v19.0/{page_id}/photos", files=files, data=data)
+with open(dotenv_path, "r", encoding="utf-8") as f:
+    for line in f:
+        line = line.strip()
+        if line and not line.startswith("#") and "=" in line:
+            key, value = line.split("=", 1)
+            key = key.strip()
+            value = value.strip()
+            os.environ[key] = value
 
-print(r.status_code, r.text)
+# Now access the variables
+ACCESS_TOKEN = os.getenv("FACEBOOK_PAGE_TOKEN")
+PAGE_ID = os.getenv("FACEBOOK_PAGE_ID")
+
+print("ACCESS_TOKEN:", repr(ACCESS_TOKEN))
+print("PAGE_ID:", repr(PAGE_ID))
+
+if ACCESS_TOKEN:
+    print("✅ Token loaded successfully!")
+else:
+    print("❌ Token not found.")

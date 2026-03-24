@@ -41,7 +41,7 @@ def _fallback_caption(quote: str, author: str | None = None) -> str:
     base = quote
     return append_hashtags(base)
 
-'''
+
 def generate_caption(quote: str, author: str | None = None) -> str:
     """
     Generate a short complementary caption.
@@ -82,8 +82,9 @@ def generate_caption(quote: str, author: str | None = None) -> str:
     except Exception:
         # Any API failure → fallback
         return _fallback_caption(quote, author)
-'''
+    
 
+'''
 ### temporary debugging code to test caption generation in isolation
 def generate_caption(quote: str, author: str | None = None) -> str:
     if not USE_LLM:
@@ -135,3 +136,4 @@ def generate_caption(quote: str, author: str | None = None) -> str:
     except Exception as e:
         print("GROQ ERROR:", str(e))
         raise e  # 🔥 DO NOT fallback during debugging
+'''

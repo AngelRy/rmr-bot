@@ -88,6 +88,12 @@ def generate_caption(quote: str, author: str | None = None) -> str:
 def generate_caption(quote: str, author: str | None = None) -> str:
     if not USE_LLM:
         return _fallback_caption(quote, author)
+    
+    # debug start
+    key = os.getenv("GROQ_API_KEY")
+    print("KEY LENGTH:", len(key) if key else "None")
+    print("kEY START:", key[:10] if key else "None")
+    # debug end
 
     user_prompt = f"Quote:\n{quote}\n"
     if author:

@@ -41,7 +41,7 @@ def _fallback_caption(quote: str, author: str | None = None) -> str:
     base = quote
     return append_hashtags(base)
 
-
+'''
 def generate_caption(quote: str, author: str | None = None) -> str:
     """
     Generate a short complementary caption.
@@ -82,3 +82,50 @@ def generate_caption(quote: str, author: str | None = None) -> str:
     except Exception:
         # Any API failure → fallback
         return _fallback_caption(quote, author)
+'''
+
+### temporary debugging code to test caption generation in isolation
+def generate_caption(quote: str, author: str | None = None) -> str:
+    if not USE_LLM:
+        return _fallback_caption(quote, author)
+
+    user_prompt = f"Quote:\n{quote}\n"
+    if author:
+        user_prompt += f"\nAuthor: {author}\n"
+
+    user_prompt += (
+        "\nWrite a short complementary caption that expands on the idea of the quote "
+        "without repeating it verbatim."
+    )
+
+    client = OpenAI(
+        api_key=os.getenv("GROQ_API_KEY"),
+        base_url="https://api.groq.com/openai/v1"
+    )
+
+    try:
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.7,
+            max_tokens=160,
+        )
+
+        print("GROQ RAW RESPONSE:", response)
+        print("CHOICES:", response.choices)
+
+        content = response.choices[0].message.content
+        print("RAW CONTENT:", content)
+
+        if not content:
+            raise ValueError("Empty content from Groq")
+
+        caption = content.strip()
+        return append_hashtags(caption)
+
+    except Exception as e:
+        print("GROQ ERROR:", str(e))
+        raise e  # 🔥 DO NOT fallback during debugging
